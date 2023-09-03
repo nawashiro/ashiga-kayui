@@ -7,7 +7,11 @@ export default function HomePage() {
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [sessionId, setSessionId] = useState("");
 
-  const handleConnect = async () => {
+  const speak = async (text: string) => {
+    await ScreenReader.speak({ value: text });
+  };
+
+  const handleConnect = () => {
     //チェンネルへの接続
     if (host) {
       //セッションIDを設定
@@ -37,13 +41,17 @@ export default function HomePage() {
 
         if (message.body.type === "note") {
           const noteData = message.body;
-          console.log("Received note:", noteData);
+          //console.log("Received note:", noteData);
 
           //テキストに対する処理
           const noteText = message.body.body.text;
           if (noteText != null) {
             console.log("text:", noteText);
-            ScreenReader.speak(noteText);
+            let speakText = noteText.replace(
+              /(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi,
+              ""
+            );
+            speak(speakText);
           }
         }
       };
@@ -82,7 +90,7 @@ export default function HomePage() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="misskey server domain"
+          placeholder="example.com"
           value={host}
           onChange={(e) => setHost(e.target.value)}
         ></input>
