@@ -1,6 +1,6 @@
 import { ScreenReader } from "@capacitor/screen-reader";
 import { v4 as uuidv4 } from "uuid";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function HomePage() {
   const [host, setHost] = useState(""); //バックエンドのドメイン
