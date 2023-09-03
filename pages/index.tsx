@@ -1,6 +1,16 @@
 import { ScreenReader } from "@capacitor/screen-reader";
 import { v4 as uuidv4 } from "uuid";
 import React, { useState } from "react";
+import {
+  Title,
+  Text,
+  Card,
+  TextInput,
+  Button,
+  Subtitle,
+  Flex,
+  Metric,
+} from "@tremor/react";
 
 export default function HomePage() {
   const [host, setHost] = useState(""); //バックエンドのドメイン
@@ -33,7 +43,7 @@ export default function HomePage() {
         const data = {
           type: "connect",
           body: {
-            channel: "globalTimeline",
+            channel: "localTimeline",
             id: newSessionId,
           },
         };
@@ -95,27 +105,38 @@ export default function HomePage() {
 
   return (
     <>
-      <h1>ashiga-kayui</h1>
+      <div className="wrapcontent">
+        <Title>ashiga-kayui</Title>
 
-      <p>
-        ashiga-kayuiはMisskeyの投稿を自動読み上げするアプリです。
-        <br />
-        ログイン不要で使用することができます。
-      </p>
-      {formActive ? (
-        <form onSubmit={handleSubmit}>
-          <p>好きなMisskeyサーバーのドメイン名を入力してください。</p>
-          <input
-            type="text"
-            placeholder="example.com"
-            value={host}
-            onChange={(e) => setHost(e.target.value)}
-          ></input>
-          <button type="submit">Connect</button>
-        </form>
-      ) : (
-        <button onClick={disconnectChannel}>disconnect</button>
-      )}
+        <Card>
+          <Subtitle>これはなに？</Subtitle>
+          <Text>
+            ashiga-kayuiはMisskeyの投稿を自動読み上げするアプリです。
+            <br />
+            ログイン不要で使用することができます。
+          </Text>
+        </Card>
+
+        <Card>
+          <Subtitle>サーバーへ接続</Subtitle>
+          {formActive ? (
+            <form onSubmit={handleSubmit}>
+              <Text>好きなMisskeyサーバーのドメイン名を入力してください。</Text>
+              <Flex>
+                <TextInput
+                  type="text"
+                  placeholder="example.com"
+                  value={host}
+                  onChange={(e) => setHost(e.target.value)}
+                ></TextInput>
+                <Button type="submit">接続</Button>
+              </Flex>
+            </form>
+          ) : (
+            <Button onClick={disconnectChannel}>切断</Button>
+          )}
+        </Card>
+      </div>
     </>
   );
 }
