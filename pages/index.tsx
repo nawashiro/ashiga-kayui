@@ -13,7 +13,7 @@ import {
 } from "@tremor/react";
 
 export default function HomePage() {
-  const [host, setHost] = useState(""); //バックエンドのドメイン
+  const [host, setHost] = useState("misskey.io"); //バックエンドのドメイン
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [sessionId, setSessionId] = useState("");
   const [formActive, setFormActive] = useState(true);
