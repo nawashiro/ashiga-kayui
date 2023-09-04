@@ -122,7 +122,7 @@ export default function HomePage() {
           <Subtitle>サーバーへ接続</Subtitle>
           {formActive ? (
             <form onSubmit={handleSubmit}>
-              <Text>好きなMisskeyサーバーのドメイン名を入力してください。</Text>
+              <Text>好きなMisskeyサーバーのドメインを入力してください。</Text>
               <Flex>
                 <TextInput
                   type="text"
