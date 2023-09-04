@@ -62,10 +62,11 @@ export default function HomePage() {
           const noteText = message.body.body.text;
           if (noteText != null) {
             console.log("text:", noteText);
-            let speakText = noteText.replace(
-              /(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi,
-              ""
-            );
+            let speakText = noteText
+              .replace(/(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi, "")
+              .replace(/\$\[.+\]/gi, "")
+              .replace(/_/gi, " ")
+              .replace(/#/gi, "ハッシュタグ");
             speak(speakText);
           }
         }
