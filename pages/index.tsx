@@ -14,6 +14,7 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  Callout,
 } from "@tremor/react";
 import NoteCard from "@/components/noteCard";
 
@@ -128,6 +129,9 @@ export default function HomePage() {
             <br />
             ログイン不要で使用することができます。
           </Text>
+          <Callout title="警告">
+            これはテスト版であり、さまざまなものがテープで仮止めされている状態です。
+          </Callout>
         </Card>
 
         <Card>
@@ -171,7 +175,11 @@ export default function HomePage() {
                 })}
               </ul>
             </TabPanel>
-            <TabPanel></TabPanel>
+            <TabPanel>
+              <Card>
+                <Callout title="警告">未対応です。</Callout>
+              </Card>
+            </TabPanel>
           </TabPanels>
         </TabGroup>
       </div>
