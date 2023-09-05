@@ -176,9 +176,7 @@ export default function HomePage() {
               </ul>
             </TabPanel>
             <TabPanel>
-              <Card>
                 <Callout title="警告">未対応です。</Callout>
-              </Card>
             </TabPanel>
           </TabPanels>
         </TabGroup>
