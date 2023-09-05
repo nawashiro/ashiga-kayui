@@ -32,7 +32,8 @@ body {
   padding-left: 20px;
   padding-right: 20px;
 }
-.text-tremor-title,
-.tremor-Card-root {
+#title,
+.tremor-Card-root,
+.tremor-TabList-root {
   margin-top: 20px;
 }

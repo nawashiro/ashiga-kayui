@@ -9,14 +9,21 @@ import {
   Button,
   Subtitle,
   Flex,
-  Metric,
+  TabGroup,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
 } from "@tremor/react";
+import NoteCard from "@/components/noteCard";
 
 export default function HomePage() {
   const [host, setHost] = useState("misskey.io"); //バックエンドのドメイン
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [sessionId, setSessionId] = useState("");
   const [formActive, setFormActive] = useState(true);
+  const [localNotes, setLocalNotes] = useState<Object[]>([]);
+  const [localView, setLocalView] = useState<Object[]>([]);
 
   const speak = async (text: string) => {
     await ScreenReader.speak({ value: text });
@@ -55,12 +62,17 @@ export default function HomePage() {
         const message = JSON.parse(event.data);
 
         if (message.body.type === "note") {
-          const noteData = message.body;
-          //console.log("Received note:", noteData);
+          const noteData = message.body.body;
 
           //テキストに対する処理
-          const noteText = message.body.body.text;
+          const noteText = noteData.text;
           if (noteText != null) {
+            //ノートを保存
+            setLocalNotes((prevNotes) => [...prevNotes, noteData]);
+            setLocalView((prevNotes) => [noteData, ...prevNotes]);
+
+            console.log(noteData);
+
             console.log("text:", noteText);
             let speakText = noteText
               .replace(/(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi, "")
@@ -107,7 +119,7 @@ export default function HomePage() {
   return (
     <>
       <div className="wrapcontent">
-        <Title>ashiga-kayui</Title>
+        <Title id="title">ashiga-kayui</Title>
 
         <Card>
           <Subtitle>これはなに？</Subtitle>
@@ -137,6 +149,31 @@ export default function HomePage() {
             <Button onClick={disconnectChannel}>切断</Button>
           )}
         </Card>
+
+        <TabGroup>
+          <TabList variant="solid">
+            <Tab>Local</Tab>
+            <Tab>Global</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <ul>
+                {localView.map((note: any, index) => {
+                  return (
+                    <NoteCard
+                      name={note.user.name}
+                      url={`https://${host}/notes/${note.id}`}
+                      date={note.createdAt}
+                      text={note.text}
+                      key={index}
+                    />
+                  );
+                })}
+              </ul>
+            </TabPanel>
+            <TabPanel></TabPanel>
+          </TabPanels>
+        </TabGroup>
       </div>
     </>
   );
