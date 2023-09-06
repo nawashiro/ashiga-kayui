@@ -120,7 +120,7 @@ export default function HomePage() {
   return (
     <>
       <div className="wrapcontent">
-        <Title id="title">ashiga-kayui</Title>
+        <Title className="margin-top">ashiga-kayui</Title>
 
         <Card>
           <Subtitle>これはなに？</Subtitle>
@@ -176,7 +176,7 @@ export default function HomePage() {
               </ul>
             </TabPanel>
             <TabPanel>
-                <Callout title="警告">未対応です。</Callout>
+              <Callout title="警告">未対応です。</Callout>
             </TabPanel>
           </TabPanels>
         </TabGroup>

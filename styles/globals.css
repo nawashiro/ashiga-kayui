@@ -32,8 +32,11 @@ body {
   padding-left: 20px;
   padding-right: 20px;
 }
-#title,
+.margin-top,
 .tremor-Card-root,
 .tremor-TabList-root {
   margin-top: 20px;
+}
+p {
+  overflow-wrap: anywhere;
 }
