@@ -1,6 +1,6 @@
 import { ScreenReader } from "@capacitor/screen-reader";
 import { v4 as uuidv4 } from "uuid";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Title,
   Text,
@@ -20,15 +20,49 @@ import NoteCard from "@/components/noteCard";
 
 export default function HomePage() {
   const [host, setHost] = useState("misskey.io"); //バックエンドのドメイン
-  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
-  const [sessionId, setSessionId] = useState("");
-  const [formActive, setFormActive] = useState(true);
-  const [localNotes, setLocalNotes] = useState<Object[]>([]);
-  const [localView, setLocalView] = useState<Object[]>([]);
+  const [webSocket, setWebSocket] = useState<WebSocket | null>(null); //WebSocket
+  const [sessionId, setSessionId] = useState(""); //チャンネルに接続する時のセッションID
+  const [formActive, setFormActive] = useState(true); //ドメイン入力フォーム表示フラグ
+  const [notes, setNotes] = useState<Object[]>([]); //読み上げるノート
+  const [localView, setLocalView] = useState<Object[]>([]); //ローカルタイムライン表示
+  const [globalView, setGlobalView] = useState<Object[]>([]); //グローバルタイムライン表示
 
-  const speak = async (text: string) => {
-    await ScreenReader.speak({ value: text });
-  };
+  //読み上げ関数
+  useEffect(() => {
+    //発話インターフェイス
+    const synth = window.speechSynthesis;
+
+    const intervalId = setInterval(() => {
+      //実行中でなければ
+      if (!synth.pending) {
+        //ノートを取得
+        const noteData: any = notes.slice(-1)[0];
+        //ノートを削除
+        setNotes(notes.slice(0, -1));
+
+        console.log(notes);
+
+        if (noteData != null) {
+          console.log("noteData: " + noteData);
+
+          //ノートを表示
+          setLocalView((prevNotes) => [noteData, ...prevNotes]);
+
+          //不要部分を削除
+          let speakText = noteData.text
+            .replace(/(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi, "") //urlを削除
+            .replace(/\$\[.+\]/gi, "") //MFM特殊記号を削除
+            .replace(/\*\*/gi, "") //MFM強調記号を削除
+            .replace(/\*\*\*/gi, "") //MFM強調記号を削除
+            .replace(/_/gi, " ") //「アンダーバー」を削除
+            .replace(/#/gi, "ハッシュタグ"); //「いげた」から「ハッシュタグ」に変更
+          //発言
+          synth.speak(new SpeechSynthesisUtterance(speakText));
+        }
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  });
 
   const handleConnect = () => {
     //チェンネルへの接続
@@ -62,26 +96,8 @@ export default function HomePage() {
       newWebSocket.onmessage = (event) => {
         const message = JSON.parse(event.data);
 
-        if (message.body.type === "note") {
-          const noteData = message.body.body;
-
-          //テキストに対する処理
-          const noteText = noteData.text;
-          if (noteText != null) {
-            //ノートを保存
-            setLocalNotes((prevNotes) => [...prevNotes, noteData]);
-            setLocalView((prevNotes) => [noteData, ...prevNotes]);
-
-            console.log(noteData);
-
-            console.log("text:", noteText);
-            let speakText = noteText
-              .replace(/(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi, "")
-              .replace(/\$\[.+\]/gi, "")
-              .replace(/_/gi, " ")
-              .replace(/#/gi, "ハッシュタグ");
-            speak(speakText);
-          }
+        if (message.body.type === "note" && message.body.body.text != null) {
+          setNotes((prevNotes) => [...prevNotes, message.body.body]);
         }
       };
 
