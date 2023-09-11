@@ -15,6 +15,9 @@ import {
   TabPanels,
   TabPanel,
   Callout,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
 } from "@tremor/react";
 import NoteCard from "@/components/noteCard";
 
@@ -176,13 +179,12 @@ export default function HomePage() {
             <br />
             ログイン不要で使用することができます。
           </Text>
-          <Callout title="警告">
+          <Callout title="警告" className="margin-top">
             これはテスト版であり、さまざまなものがテープで仮止めされている状態です。
           </Callout>
         </Card>
 
         <Card>
-          <Subtitle>サーバーへ接続</Subtitle>
           {formActive ? (
             <form onSubmit={handleSubmit}>
               <Text>好きなMisskeyサーバーのドメインを入力してください。</Text>
@@ -197,8 +199,20 @@ export default function HomePage() {
               </Flex>
             </form>
           ) : (
-            <Button onClick={disconnectChannel}>切断</Button>
+            <>
+              <Button onClick={disconnectChannel} className="margin-right">
+                切断
+              </Button>
+              <Button>読み上げをスキップ</Button>
+            </>
           )}
+
+          <Accordion className="margin-top">
+            <AccordionHeader>設定</AccordionHeader>
+            <AccordionBody>
+              <Callout title="警告">未対応です。</Callout>
+            </AccordionBody>
+          </Accordion>
         </Card>
 
         <TabGroup

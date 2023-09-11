@@ -37,6 +37,9 @@ body {
 .tremor-TabList-root {
   margin-top: 20px;
 }
+.margin-right {
+  margin-right: 10px;
+}
 p {
   overflow-wrap: anywhere;
 }
