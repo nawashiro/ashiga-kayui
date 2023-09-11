@@ -1,4 +1,3 @@
-import { ScreenReader } from "@capacitor/screen-reader";
 import { v4 as uuidv4 } from "uuid";
 import React, { useState, useEffect } from "react";
 import {
@@ -30,15 +29,17 @@ export default function HomePage() {
   const [localView, setLocalView] = useState<Object[]>([]); //ローカルタイムライン表示
   const [globalView, setGlobalView] = useState<Object[]>([]); //グローバルタイムライン表示
   const [channel, setChannel] = useState<number>(0); //タブ
-
-  //発話インターフェイス
-  const synth = window.speechSynthesis;
+  const [synth, setSynth] = useState<SpeechSynthesis | null>(null);
 
   //読み上げ関数
   useEffect(() => {
+    //発話インターフェイス
+    const newSynth = window.speechSynthesis;
+    setSynth(newSynth);
+
     const intervalId = setInterval(() => {
       //発言中でないかつキューに何もなければ
-      if (!synth.speaking && !synth.pending) {
+      if (!newSynth.speaking && !newSynth.pending) {
         //ノートを取得
         const noteData: any = notes.slice(-1)[0];
         //ノートを削除
@@ -69,12 +70,12 @@ export default function HomePage() {
             .replace(/#/gi, "ハッシュタグ"); //「いげた」から「ハッシュタグ」に変更
 
           //発言
-          synth.speak(new SpeechSynthesisUtterance(speakText));
+          newSynth.speak(new SpeechSynthesisUtterance(speakText));
         }
       }
     }, 1000);
     return () => clearInterval(intervalId);
-  });
+  }, [notes]);
 
   const handleConnect = () => {
     //チェンネルへの接続
@@ -168,7 +169,9 @@ export default function HomePage() {
   };
 
   const speakSkip = () => {
-    synth.cancel();
+    if (synth) {
+      synth.cancel();
+    }
   };
 
   return (
