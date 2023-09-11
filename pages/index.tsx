@@ -149,11 +149,13 @@ export default function HomePage() {
     }
   };
 
+  //ドメイン入力
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleConnect();
   };
 
+  //タブ切り替え
   const handleChannelSelected = (e: number) => {
     setChannel(e);
     if (webSocket) {
