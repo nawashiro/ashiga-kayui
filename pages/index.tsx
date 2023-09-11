@@ -37,8 +37,8 @@ export default function HomePage() {
     const synth = window.speechSynthesis;
 
     const intervalId = setInterval(() => {
-      //実行中でなければ
-      if (!synth.pending) {
+      //発言中でないかつキューに何もなければ
+      if (!synth.speaking && !synth.pending) {
         //ノートを取得
         const noteData: any = notes.slice(-1)[0];
         //ノートを削除
