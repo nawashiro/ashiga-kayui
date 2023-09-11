@@ -41,9 +41,9 @@ export default function HomePage() {
       //発言中でないかつキューに何もなければ
       if (!newSynth.speaking && !newSynth.pending) {
         //ノートを取得
-        const noteData: any = notes.slice(-1)[0];
+        const noteData: any = notes[0];
         //ノートを削除
-        setNotes(notes.slice(0, -1));
+        setNotes(notes.slice(1));
 
         console.log(notes);
 
@@ -120,6 +120,13 @@ export default function HomePage() {
 
         if (message.body.type === "note" && message.body.body.text != null) {
           setNotes((prevNotes) => [...prevNotes, message.body.body]);
+          //キューが5以上であれば終端を削除
+          setNotes((prevNotes) => {
+            if (prevNotes.length > 5) {
+              prevNotes = prevNotes.slice(1);
+            }
+            return prevNotes;
+          });
         }
       };
 
