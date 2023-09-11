@@ -31,11 +31,11 @@ export default function HomePage() {
   const [globalView, setGlobalView] = useState<Object[]>([]); //グローバルタイムライン表示
   const [channel, setChannel] = useState<number>(0); //タブ
 
+  //発話インターフェイス
+  const synth = window.speechSynthesis;
+
   //読み上げ関数
   useEffect(() => {
-    //発話インターフェイス
-    const synth = window.speechSynthesis;
-
     const intervalId = setInterval(() => {
       //発言中でないかつキューに何もなければ
       if (!synth.speaking && !synth.pending) {
@@ -167,6 +167,10 @@ export default function HomePage() {
     }
   };
 
+  const speakSkip = () => {
+    synth.cancel();
+  };
+
   return (
     <>
       <div className="wrapcontent">
@@ -203,7 +207,7 @@ export default function HomePage() {
               <Button onClick={disconnectChannel} className="margin-right">
                 切断
               </Button>
-              <Button>読み上げをスキップ</Button>
+              <Button onClick={speakSkip}>読み上げをスキップ</Button>
             </>
           )}
 
