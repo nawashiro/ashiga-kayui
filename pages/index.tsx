@@ -43,19 +43,24 @@ export default function HomePage() {
         console.log(notes);
 
         if (noteData != null) {
-          console.log("noteData: " + noteData);
+          console.log(noteData);
 
           //ノートを表示
           setLocalView((prevNotes) => [noteData, ...prevNotes]);
 
           //不要部分を削除
-          let speakText = noteData.text
+          let speakText =
+            `${
+              noteData.user.name ? noteData.user.name : noteData.user.username
+            }さん、` + noteData.text;
+          speakText = speakText
             .replace(/(https?|ftp):\/\/[^\s/$.?#].[^\s]*/gi, "") //urlを削除
             .replace(/\$\[.+\]/gi, "") //MFM特殊記号を削除
             .replace(/\*\*/gi, "") //MFM強調記号を削除
             .replace(/\*\*\*/gi, "") //MFM強調記号を削除
-            .replace(/_/gi, " ") //「アンダーバー」を削除
+            .replace(/_/gi, " ") //「アンダーライン」を削除
             .replace(/#/gi, "ハッシュタグ"); //「いげた」から「ハッシュタグ」に変更
+
           //発言
           synth.speak(new SpeechSynthesisUtterance(speakText));
         }
@@ -181,7 +186,9 @@ export default function HomePage() {
                 {localView.map((note: any, index) => {
                   return (
                     <NoteCard
-                      name={note.user.name}
+                      name={
+                        note.user.name ? note.user.name : note.user.username
+                      }
                       url={`https://${host}/notes/${note.id}`}
                       date={note.createdAt}
                       text={note.text}
@@ -196,7 +203,9 @@ export default function HomePage() {
                 {globalView.map((note: any, index) => {
                   return (
                     <NoteCard
-                      name={note.user.name}
+                      name={
+                        note.user.name ? note.user.name : note.user.username
+                      }
                       url={`https://${host}/notes/${note.id}`}
                       date={note.createdAt}
                       text={note.text}
