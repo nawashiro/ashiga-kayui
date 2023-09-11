@@ -172,8 +172,8 @@ export default function HomePage() {
 
         <TabGroup>
           <TabList variant="solid">
-            <Tab>Local</Tab>
-            <Tab>Global</Tab>
+            <Tab>ローカル</Tab>
+            <Tab>グローバル</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -192,7 +192,19 @@ export default function HomePage() {
               </ul>
             </TabPanel>
             <TabPanel>
-              <Callout title="警告">未対応です。</Callout>
+              <ul>
+                {globalView.map((note: any, index) => {
+                  return (
+                    <NoteCard
+                      name={note.user.name}
+                      url={`https://${host}/notes/${note.id}`}
+                      date={note.createdAt}
+                      text={note.text}
+                      key={index}
+                    />
+                  );
+                })}
+              </ul>
             </TabPanel>
           </TabPanels>
         </TabGroup>
