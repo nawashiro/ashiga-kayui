@@ -41,11 +41,15 @@ export default function HomePage() {
       //発言中でないかつキューに何もなければ
       if (!newSynth.speaking && !newSynth.pending) {
         //ノートを取得
-        const noteData: any = notes[0];
-        //ノートを削除
-        setNotes(notes.slice(1));
+        let noteData: any;
 
-        console.log(notes);
+        setNotes((preNotes) => {
+          noteData = preNotes[0];
+          console.log(preNotes);
+
+          //ノートを削除
+          return preNotes.slice(1);
+        });
 
         if (noteData != null) {
           console.log(noteData);
@@ -75,7 +79,7 @@ export default function HomePage() {
       }
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [notes]);
+  }, []);
 
   const handleConnect = () => {
     //チェンネルへの接続
@@ -144,6 +148,12 @@ export default function HomePage() {
     //フォーム切り替え
     setFormActive(true);
 
+    //発言キューを初期化
+    setNotes([]);
+
+    //発言をスキップ
+    speakSkip();
+
     //切断リクエスト送信
     if (webSocket) {
       const data = {
@@ -175,6 +185,7 @@ export default function HomePage() {
     }
   };
 
+  //発言をスキップ
   const speakSkip = () => {
     if (synth) {
       synth.cancel();
