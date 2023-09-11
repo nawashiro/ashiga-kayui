@@ -26,6 +26,7 @@ export default function HomePage() {
   const [notes, setNotes] = useState<Object[]>([]); //読み上げるノート
   const [localView, setLocalView] = useState<Object[]>([]); //ローカルタイムライン表示
   const [globalView, setGlobalView] = useState<Object[]>([]); //グローバルタイムライン表示
+  const [channel, setChannel] = useState<number>(0); //タブ
 
   //読み上げ関数
   useEffect(() => {
@@ -46,8 +47,11 @@ export default function HomePage() {
           console.log(noteData);
 
           //ノートを表示
-          setLocalView((prevNotes) => [noteData, ...prevNotes]);
-
+          if (noteData.channel == 0) {
+            setLocalView((prevNotes) => [noteData, ...prevNotes]);
+          } else {
+            setGlobalView((prevNotes) => [noteData, ...prevNotes]);
+          }
           //不要部分を削除
           let speakText =
             `${
@@ -87,19 +91,28 @@ export default function HomePage() {
         setSessionId(newSessionId);
         setWebSocket(newWebSocket);
 
-        const data = {
-          type: "connect",
-          body: {
-            channel: "localTimeline",
-            id: newSessionId,
-          },
-        };
-        newWebSocket.send(JSON.stringify(data));
+        setChannel((preChannel) => {
+          const data = {
+            type: "connect",
+            body: {
+              channel: preChannel ? "globalTimeline" : "localTimeline",
+              id: newSessionId,
+            },
+          };
+          newWebSocket.send(JSON.stringify(data));
+
+          return preChannel;
+        });
       };
 
       // WebSocketメッセージを受信したときの処理
       newWebSocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+        let message = JSON.parse(event.data);
+
+        setChannel((preChannel) => {
+          message.body.body.channel = preChannel;
+          return preChannel;
+        });
 
         if (message.body.type === "note" && message.body.body.text != null) {
           setNotes((prevNotes) => [...prevNotes, message.body.body]);
@@ -129,6 +142,9 @@ export default function HomePage() {
         },
       };
       webSocket.send(JSON.stringify(data));
+      webSocket.close();
+      setWebSocket(null);
+
       console.log("disconnect");
     }
   };
@@ -136,6 +152,14 @@ export default function HomePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleConnect();
+  };
+
+  const handleChannelSelected = (e: number) => {
+    setChannel(e);
+    if (webSocket) {
+      disconnectChannel();
+      handleConnect();
+    }
   };
 
   return (
@@ -175,7 +199,10 @@ export default function HomePage() {
           )}
         </Card>
 
-        <TabGroup>
+        <TabGroup
+          defaultIndex={channel}
+          onIndexChange={(e) => handleChannelSelected(e)}
+        >
           <TabList variant="solid">
             <Tab>ローカル</Tab>
             <Tab>グローバル</Tab>
